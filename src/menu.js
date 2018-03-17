@@ -42,7 +42,8 @@ const sidebarMenu = [
 
   {
     key: 'alone2',
-    name: '我没有图标',
+    name: '测试接口',
+    icon:'coffee'
   },
   {
     key: 'noiconhaha',

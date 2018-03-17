@@ -1,4 +1,7 @@
 import React from 'react';
+import {connect} from 'react-redux'
+import {bindActionCreators} from 'redux'
+import globalConfig from 'config';
 import {
   Icon,
   Row,
@@ -7,12 +10,14 @@ import {
   Table,
   Button,
 } from 'antd';
-import globalConfig from 'config.js';
+import {message} from 'antd';
+import ajax from '../../utils/ajax';
 
 class SimpleTab extends React.PureComponent {
 
   // 设置state状态
   state = {
+    requesting: false, // 当前是否正在请求服务端接口
     selectedRowKeys: [], // Check here to configure the default column
     loading: false,
   };
@@ -27,6 +32,27 @@ class SimpleTab extends React.PureComponent {
     }, 1000);
   }
 
+  // 获取books列表
+  initBookList = async(e) => {    // async可以配合箭头函数
+    // e.preventDefault();  // 这个很重要, 防止跳转
+    const hide = message.loading('正在加载...', 1);
+    try {
+      // 服务端验证
+      debugger;
+      const res = await ajax.getBookList(1,20);
+      hide();
+      if (res.success) {
+        message.success('登录成功');
+        return res;
+      } else {
+        message.error(`登录失败: ${res.message}, 请联系管理员`);
+      }
+    } catch (exception) {
+      hide();
+      message.error(`网络请求出错: ${exception.message}`);
+    }
+  };
+
   //选中状态更改
   onSelectChange = (selectedRowKeys) => {
     console.log('selectedRowKeys changed: ', selectedRowKeys);
@@ -34,7 +60,6 @@ class SimpleTab extends React.PureComponent {
   }
 
   render() {
-
     const { loading, selectedRowKeys } = this.state;
     const rowSelection = {
       selectedRowKeys,
@@ -100,23 +125,33 @@ class SimpleTab extends React.PureComponent {
       title: '操作',
       dataIndex: 'did',
       render: () => <a href="#">Del</a>
-    },
+    }
     ];
 
+
+
     const data = [];
-    for (let i=0;i<100;i++){
-      data.push({
-        key: i,
-        title: `社会医学`,
-        author:'杨诎人',
-        isbn:'9787040357936',
-        path:'images/nocover.jpg',
-        price:parseInt(Math.random()*100),
-        pages:i,
-        publisher:'东南大学出版社',
-        status:'0',
-        supply:'23'
-      });
+    let ajaxData;
+    try {
+      ajaxData = this.initBookList();
+    }catch (Exception){
+      message.error("api调用会失败",2);
+    }
+    if (ajaxData===undefined){
+      for (let i=0;i<100;i++){
+        data.push({
+          key: i,
+          title: `社会医学`,
+          author:'杨诎人',
+          isbn:'9787040357936',
+          path:'images/nocover.jpg',
+          price:parseInt(Math.random()*100),
+          pages:i,
+          publisher:'东南大学出版社',
+          status:'0',
+          supply:'23'
+        });
+      }
     }
 
     //const 定义的变量

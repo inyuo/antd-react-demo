@@ -88,14 +88,42 @@ class Ajax {
   }
 
   /**
+   * 获取Books
+   *
+   * @returns {*}
+   */
+  getBookList(page,rows) {
+    debugger;
+    if (page == undefined||rows===undefined){
+      page=1;
+      rows=20;
+    }
+    const headers = {'Content-Type': 'application/x-www-form-urlencoded'};
+    return this.post(`http://127.0.0.1:8090/book/listAll.do`,{page, rows},headers);
+  }
+
+
+  /**
    * 用户登录
    *
    * @param username
    * @param password
    */
   login(username, password) {
-    const headers = {'Content-Type': 'application/x-www-form-urlencoded'};
-    return this.post(`${globalConfig.getAPIPath()}${globalConfig.login.validate}`, {username, password}, {headers});
+    //const headers = {'Content-Type': 'application/x-www-form-urlencoded'};
+    // return this.post(`${globalConfig.getAPIPath()}${globalConfig.login.validate}`, {username, password}, {headers});
+    return mockPromise(resolve => {
+      if (username === 'guest' && password === 'guest') {
+        result.success = true;
+        result.data = 'guest';
+        resolve(result);
+      } else {
+        result.success = false;
+        result.code = 100;
+        result.message = 'invalid username or password';
+        resolve(result);
+      }
+    });
   }
 
   /**
