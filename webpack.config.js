@@ -10,26 +10,8 @@ const babelLoaderConfig = {
   cacheDirectory: true,
 };
 
-//导入proxy
-var proxy = require('http-proxy-middleware')
 
-//context可以是单个字符串，也可以是多个字符串数组，分别对应你需要代理的api,星号（*）表示匹配当前路径下面的所有api
-const context = [`/book`, `/*`]
 
-module.exports = {
-  devServer: {
-    host: 'localhost',
-    port: '8090',
-    proxy: [
-      {
-        context: context,
-        target: 'https://127.0.0.1',
-        changeOrigin: true,
-        secure: false
-      }
-    ]
-  }
-}
 // 向less loader传的值, 用于覆盖less源文件中的变量
 // 有个小问题就是这个变量只会初始化一次, 不会随globalConfig的变化而变化
 // 所以在webpack-dev-server中调试时, 热加载有点问题, 不能实时更新
@@ -37,11 +19,38 @@ const lessLoaderVars = {
   sidebarCollapsible: globalConfig.sidebar.collapsible,
 };
 
+//导入proxy
+var proxy = require('http-proxy-middleware');
+
+//context可以是单个字符串，也可以是多个字符串数组，分别对应你需要代理的api,星号（*）表示匹配当前路径下面的所有api
+ const context = [`/api`, `/*`];
+
+
 module.exports = {
   devtool: 'eval-source-map',
 
+  devServer: {
+    host: '127.0.0.1',
+    port: '4040',
+    progress: true,
+    historyApiFallback: true,
+    hot: true,
+    hotOnly:true,
+    clientLogLevel: 'none',
+    inline: true,
+    stats: { colors: true },
+    proxy: [
+      {
+        //context可以是单个字符串，也可以是多个字符串数组，分别对应你需要代理的api,星号（*）表示匹配当前路径下面的所有api
+        context:context,
+        target: 'https://127.0.0.1:8090',
+        changeOrigin: true,
+        secure: false
+      }
+    ]
+  },
   entry: [
-    'webpack-dev-server/client?http://0.0.0.0:4040', // WebpackDevServer host and port
+    'webpack-dev-server/client?http://127.0.0.1:4040', // WebpackDevServer host and port
     'webpack/hot/only-dev-server', // "only" prevents reload on syntax errors
     'babel-polyfill',  // 可以使用完整的ES6特性, 大概增加100KB
     './src/index.js',  // 编译的入口

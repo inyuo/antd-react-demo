@@ -100,6 +100,7 @@ class App extends React.Component {
         // 如果网络请求出错, 弹出一个错误提示
         logger.error('getCurrentUser error, %o', e);
         this.handleLoginError(`网络请求出错: ${e.message}`);
+        hide().cancel();
       }
     }
   }

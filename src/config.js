@@ -13,7 +13,7 @@ module.exports = {
   favicon: 'http://jxy.me/favicon.ico',  // 设置网页的favicon, 可以是外链, 也可以是本地
   footer: '<a target="_blank" href="#">foolbear</a>版权所有 © 2015-2099',  // footer中显示的字, 可以嵌入html标签
 
-  debug: true,  // 是否开启debug模式, 不会请求后端接口, 使用mock的数据
+  debug: false,  // 是否开启debug模式, 不会请求后端接口, 使用mock的数据
 
   tabMode: {  // tab模式相关配置
     enable: false,  // 是否开启tab模式
@@ -21,7 +21,7 @@ module.exports = {
   },
 
   log: {
-    level: 'info',  // 日志级别, 类似slf4j中的root logger, 目前支持debug/info/warn/error 4种级别
+    level: 'debug',  // 日志级别, 类似slf4j中的root logger, 目前支持debug/info/warn/error 4种级别
     // 除了root logger以外, 也可以为每个logger单独设置级别
     debug: [],
     info: [],
@@ -43,8 +43,8 @@ module.exports = {
     // 1. 使用sso登录, 直接跳转就可以了
     sso: '',  // 是否使用单点登录? 是的话我会把地址encode后加到后面, 然后跳转, 如果这个是空字符串, 说明不使用单点登录
     // 2. 不使用sso, 使用我提供的一个登录界面
-    validate: '/login',  // 校验用户信息, 表单的submit地址. 如果登录成功, 必须返回用户名
-    logout: '/logout',  // 退出的url, 用户点击退出时, 浏览器会直接跳转到这个链接
+    validate: 'user/login',  // 校验用户信息, 表单的submit地址. 如果登录成功, 必须返回用户名
+    logout: 'user/logout',  // 退出的url, 用户点击退出时, 浏览器会直接跳转到这个链接
   },
 
   upload: {  // 上传相关配置

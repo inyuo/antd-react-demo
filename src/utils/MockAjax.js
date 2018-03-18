@@ -211,6 +211,7 @@ class MockAjax {
     logger.debug('method=%s, url=%s, params=%o, data=%o, headers=%o', method, url, params, data, headers);
     return new Promise((resolve, reject) => {
       const tmp = superagent(method, url);
+      console.log("tmp"+tmp);
       // 是否是跨域请求
       if (globalConfig.isCrossDomain()) {
         tmp.withCredentials();
@@ -271,7 +272,7 @@ class MockAjax {
       rows=20;
     }
     const headers = {'Content-Type': 'application/x-www-form-urlencoded'};
-    return this.post(`http://127.0.0.1:8090/book/listAll.do`,{page, rows},headers);
+    return this.post(`${globalConfig.getAPIPath()}${globalConfig.book.listAll}`,{page, rows,headers});
   }
 
   login(username, password) {
