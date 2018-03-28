@@ -23,7 +23,7 @@ const lessLoaderVars = {
 var proxy = require('http-proxy-middleware');
 
 //context可以是单个字符串，也可以是多个字符串数组，分别对应你需要代理的api,星号（*）表示匹配当前路径下面的所有api
- const context = [`/api`, `/*`];
+ const context = [`/user`, `/*`];
 
 
 module.exports = {
@@ -43,7 +43,7 @@ module.exports = {
       {
         //context可以是单个字符串，也可以是多个字符串数组，分别对应你需要代理的api,星号（*）表示匹配当前路径下面的所有api
         context:context,
-        target: 'https://127.0.0.1:8090',
+        target: 'https://127.0.0.1:8080',
         changeOrigin: true,
         secure: false
       }

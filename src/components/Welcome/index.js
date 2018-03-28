@@ -1,7 +1,13 @@
 import React from 'react';
 import {Row, Col, Card, Icon} from 'antd';
+import G2 from '@antv/g2';
+
 
 import './index.less';
+
+
+
+
 
 /**
  * 展示欢迎界面
@@ -9,6 +15,26 @@ import './index.less';
 class Welcome extends React.PureComponent {
 
   render() {
+    const data = [
+      { year: '1951 年', sales: 38 },
+      { year: '1952 年', sales: 52 },
+      { year: '1956 年', sales: 61 },
+      { year: '1957 年', sales: 145 },
+      { year: '1958 年', sales: 48 },
+      { year: '1959 年', sales: 38 },
+      { year: '1960 年', sales: 38 },
+      { year: '1962 年', sales: 38 },
+    ];
+    const chart = new G2.constructor({
+      container: 'c1',
+      width: 1000,
+      height: 500,
+      source:data,
+      scale:{
+        tickInterval: 20
+      },
+      padding: [ 20, 20, 95, 80 ], // 上，右，下，左
+    });
     return (
       <div>
         <Row gutter={16}>
@@ -74,6 +100,13 @@ class Welcome extends React.PureComponent {
                 </div>
               </div>
             </Card>
+          </Col>
+        </Row>
+        <Row gutter={16}>
+          <Col className="gutter-row" span={20}>
+            <div id="c1">
+              <chart/>
+            </div>
           </Col>
         </Row>
       </div>

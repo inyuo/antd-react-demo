@@ -79,11 +79,12 @@ class App extends React.Component {
    */
   async componentDidMount() {
     if (!this.props.login) {
-      const hide = message.loading('正在获取用户信息...', 0);
+      const hide = message.loading('正在获取用户信息...', 1);
 
       try {
         // 先去服务端验证下, 说不定已经登录了
         const res = await ajax.getCurrentUser();
+        debug
         hide();
 
         // 注意这里, debug模式下每次刷新都必须重新登录
@@ -100,7 +101,6 @@ class App extends React.Component {
         // 如果网络请求出错, 弹出一个错误提示
         logger.error('getCurrentUser error, %o', e);
         this.handleLoginError(`网络请求出错: ${e.message}`);
-        hide().cancel();
       }
     }
   }

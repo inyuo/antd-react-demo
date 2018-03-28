@@ -3,7 +3,6 @@ import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import globalConfig from 'config';
 import ajax from '../../utils/ajax';
-import axios from 'axios';
 import Logger from '../../utils/Logger';
 import {message} from 'antd';
 import './index.less';
@@ -15,6 +14,7 @@ const logger = Logger.getLogger('Login');
  * 定义Login组件
  */
 class Login extends React.PureComponent {
+
 
   // 这个login样式是直接从网上找的: https://colorlib.com/wp/html5-and-css3-login-forms/
   // 一般而言公司内部都会提供基于LDAP的统一登录, 用到这个登录组件的场景应该挺少的
@@ -40,46 +40,26 @@ class Login extends React.PureComponent {
    *
    * @param e
    */
-  handleSubmit = async(e) => {  // async可以配合箭头函数
+  handleSubmit = async (e) => {  // async可以配合箭头函数
      e.preventDefault();  // 这个很重要, 防止跳转
+    //传参为空
     this.setState({requesting: true});
     const hide = message.loading('正在验证...', 0);
 
-    const user={
-      username : this.state.username,
-      password : this.state.password
-    };
     const username = this.state.username;
     const password = this.state.password;
-    logger.debug('username = %s, password = %s', username, password);
 
     try {
       // 服务端验证
-      // const res = await ajax.login(username, password);
-      const res = await axios({
-        method:'post',
-        url:'http://localhost:8090/user/login.do',
-        withCredentials: false,
-        data: user,
-        headers : {
-          'Accept': 'application/x-www-form-urlencoded',
-          'Access-Control-Allow-Origin':'*',
-          'Access-Control-Allow-Credential':'true',
-          'Access-Control-Allow-Methods': 'GET, HEAD, POST, PUT, DELETE, OPTIONS'
-        }
-      }).then(function (response) {
-        console.log(response);
-      });
-
-      hide();
-      logger.debug('login validate return: result %o', res);
-
-      if (res.success) {
+      const resObj = await ajax.login(username, password);
+      logger.debug('login validate return: result %o', resObj);
+      if (resObj.data !==null &&resObj.data!==''&&resObj.status ===0) {
         message.success('登录成功');
+        hide();
         // 如果登录成功, 触发一个loginSuccess的action, payload就是登录后的用户名
-        this.props.handleLoginSuccess(res.data);
+        this.props.handleLoginSuccess(resObj.data.nickname);
       } else {
-        message.error(`登录失败: ${res.message}, 请联系管理员`);
+        message.error(`登录失败: ${resObj.msg}, 请联系管理员`);
         this.setState({requesting: false});
       }
     } catch (exception) {

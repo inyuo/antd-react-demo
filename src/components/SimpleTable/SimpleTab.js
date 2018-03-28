@@ -1,7 +1,5 @@
 import React from 'react';
 import {connect} from 'react-redux'
-import {bindActionCreators} from 'redux'
-import globalConfig from 'config';
 import {
   Icon,
   Row,
@@ -10,154 +8,109 @@ import {
   Table,
   Button,
 } from 'antd';
-import {message} from 'antd';
-import ajax from '../../utils/ajax';
+import globalConfig from "../../config";
 
 class SimpleTab extends React.PureComponent {
 
-  // 设置state状态
   state = {
-    requesting: false, // 当前是否正在请求服务端接口
-    selectedRowKeys: [], // Check here to configure the default column
-    loading: false,
+    // 本身的状态
+    loadingSchema: false,  // 是否正在从远程加载schema
+    // 选中的列
+    selectedRowKeys:[],
+    // 表单组件的状态
+    queryObj: {},  // 表单中的查询条件
+
+    // 表格组件的状态
+    dataSource: [],  // 表格中显示的数据
+    tableLoading: false,  // 表格是否是loading状态
+
+    // 分页器的状态
+    currentPage: 1,  // 当前第几页, 注意页码是从1开始的, 以前总是纠结页码从0还是1开始, 这里统一下, 跟显示给用户的一致
+    pageSize: globalConfig.DBTable.pageSize || 50,  // pageSize默认值50, 这个值一旦初始化就是不可变的
+    showSizeChanger: globalConfig.DBTable.showSizeChanger, // 是否显示修改每页显示数量的选项
+    pageSizeOptions: globalConfig.DBTable.pageSizeOptions, // 每页面显示数量选项
+    total: 0,  // 总共有多少条数据
   };
+
   start = () => {
-    this.setState({ loading: true });
+    this.setState({loading: true});
     // ajax request after empty completing
     setTimeout(() => {
       this.setState({
         selectedRowKeys: [],
         loading: false,
+        sourceData: [],
       });
     }, 1000);
   }
 
-  // 获取books列表
-  initBookList = async(e) => {    // async可以配合箭头函数
-    // e.preventDefault();  // 这个很重要, 防止跳转
-    const hide = message.loading('正在加载...', 1);
-    try {
-      // 服务端验证
-      debugger;
-      const res = await ajax.getBookList(1,20);
-      hide();
-      if (res.success) {
-        message.success('登录成功');
-        return res;
-      } else {
-        message.error(`登录失败: ${res.message}, 请联系管理员`);
-      }
-    } catch (exception) {
-      hide();
-      message.error(`网络请求出错: ${exception.message}`);
-    }
-  };
-
   //选中状态更改
   onSelectChange = (selectedRowKeys) => {
     console.log('selectedRowKeys changed: ', selectedRowKeys);
-    this.setState({ selectedRowKeys });
+    this.setState({selectedRowKeys});
   }
 
   render() {
-    const { loading, selectedRowKeys } = this.state;
+    const {loading, selectedRowKeys} = this.state;
     const rowSelection = {
       selectedRowKeys,
       onChange: this.onSelectChange,
     };
-    const hasSelected = selectedRowKeys.length > 0;
+    const hasSelected = selectedRowKeys.length;
     const columns = [{
-      title: '书名',
-      dataIndex: 'title',
+      title: '昵称',
+      dataIndex: 'nickname',
       filters: [{
-                  text: 'Joe',
-                  value: 'Joe',
-                }, {
-                  text: 'Jim',
-                  value: 'Jim',
-                }, {
-                  text: 'Submenu',
-                  value: 'Submenu',
-                }],
-      // specify the condition of filtering result
+        text: 'Joe',
+        value: 'Joe',
+      }, {
+        text: 'Jim',
+        value: 'Jim',
+      }, {
+        text: 'Submenu',
+        value: 'Submenu',
+      }],
       // here is that finding the name started with `value`
       onFilter: (value, record) => record.title.indexOf(value) === 0,
       sorter: (a, b) => a.name.title - b.title.length,
     }, {
-      title: '作者',
-      dataIndex: 'author',
+      title: '电话',
+      dataIndex: 'telephone',
     }, {
-        title: '图片',
-        dataIndex: 'path',
-        render: () => <img src="http://jingo.oss-cn-beijing.aliyuncs.com/u%3D2064010887%2C1330835443%26fm%3D27%26gp%3D0.jpg" width="80" height="100"/>
-      },{
-      title: '市场价(元)',
-      dataIndex: 'price',
-      defaultSortOrder: 'descend',
-      sorter: (a, b) => a.price - b.price,
-    },{
-      title: '出版社',
-      dataIndex: 'publisher',
-    },{
-      title: 'ISBN码',
-      dataIndex: 'isbn',
-      filters: [{
-        text: 'London',
-        value: 'London',
-      }, {
-        text: 'New York',
-        value: 'New York',
-      }],
-      filterMultiple: false,
-      onFilter: (value, record) => record.isbn.indexOf(value) === 0,
-    },{
-      title: '页数',
-      dataIndex: 'pages',
-      defaultSortOrder: 'descend',
-      sorter: (a, b) => a.pages - b.pages,
-    },  {
-      title: '上架',
+      title: '头像',
+      dataIndex: 'image',
+      render: () => <img
+        src="http://jingo.oss-cn-beijing.aliyuncs.com/u%3D2064010887%2C1330835443%26fm%3D27%26gp%3D0.jpg" width="80"
+        height="100"/>
+    }, {
+      title: '帐号状态',
       dataIndex: 'status',
-    },{
-      title: '库存',
-      dataIndex: 'supply',
-    },{
+      defaultSortOrder: 'descend',
+    }, {
+      title: '邮箱',
+      dataIndex: 'email',
+    }, {
+      title: '最后登录时间',
+      dataIndex: 'last_Login_Time',
+    }, {
+      title: '注册ip',
+      dataIndex: 'reg_Ip',
+    }, {
+      title: '注册时间',
+      dataIndex: 'reg_Time',
+    }, {
       title: '操作',
       dataIndex: 'did',
-      render: () => <a href="#">Del</a>
+      render: () => <div><a href="#">Del</a><a href="#">Edit</a></div>
     }
     ];
 
 
 
-    const data = [];
-    let ajaxData;
-    try {
-      ajaxData = this.initBookList();
-    }catch (Exception){
-      message.error("api调用会失败",2);
-    }
-    if (ajaxData===undefined){
-      for (let i=0;i<100;i++){
-        data.push({
-          key: i,
-          title: `社会医学`,
-          author:'杨诎人',
-          isbn:'9787040357936',
-          path:'images/nocover.jpg',
-          price:parseInt(Math.random()*100),
-          pages:i,
-          publisher:'东南大学出版社',
-          status:'0',
-          supply:'23'
-        });
-      }
-    }
 
-    //const 定义的变量
     return (
       <div>
-        <div style={{ marginBottom: 16 }}>
+        <div style={{marginBottom: 16}}>
           <Button
             type="primary"
             onClick={this.start}
@@ -166,11 +119,11 @@ class SimpleTab extends React.PureComponent {
           >
             更多操作
           </Button>
-          <span style={{ marginLeft: 8 }}>
+          <span style={{marginLeft: 8}}>
             {hasSelected ? `Selected ${selectedRowKeys.length} items` : ''}
           </span>
         </div>
-        <Table  rowSelection={rowSelection} columns={columns} dataSource={data} />
+        <Table rowSelection={rowSelection} columns={columns} dataSource={this.state.dataSource}/>
       </div>
     );
   }

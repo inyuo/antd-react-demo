@@ -145,57 +145,22 @@ export const headerMenu = [
     key: 'userMenu',
     child: [
       {
-        key: 'modifyUser',
-        name: '修改用户信息',
-        icon: 'bulb',
+        key: 'user333aaa',
+        name: 'user333aaa',
+        icon: 'windows',
+      },
+      {
+        key: 'setting',
+        name: '设置',
+        icon: 'setting',
         // 对于headerMenu的菜单项, 可以让它跳到外部地址, 如果设置了url属性, 就会打开一个新窗口
         // 如果不设置url属性, 行为和sidebarMenu是一样的, 激活特定的组件, 注意在index.js中配置好路由, 否则会404
-        url: 'http://jxy.me',
+        url: 'http://inyu.com',
       },
       {
-        key: 'user222',
-        name: '药药切克闹',
-        icon: 'rocket',
-      },
-      {
-        key: 'user333',
-        name: '选项3',
-        child: [
-          {
-            key: 'user333aaa',
-            name: 'user333aaa',
-            icon: 'windows',
-          },
-          {
-            key: 'user333bbb',
-            name: 'user333bbb',
-            icon: 'mac',
-          },
-        ],
-      },
-    ],
-  },
-  {
-    key: 'headerMenu2',
-    name: 'header菜单',
-    icon: 'team',
-    child: [
-      {
-        key: 'headerMenu111',
-        name: '菜单项1',
-        icon: 'windows',
-        url: 'http://jxy.me',
-      },
-      {
-        key: '菜单项2',
-        name: '短信表管理',
-        url: 'http://jxy.me',
-      },
-      {
-        key: '菜单项3',
-        name: '选项3',
-        icon: 'chrome',
-        url: 'http://jxy.me',
+        key: 'userinfo',
+        name: '个人信息',
+        icon: 'user',
       },
     ],
   },
