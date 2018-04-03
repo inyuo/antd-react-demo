@@ -69,8 +69,8 @@ class Ajax {
 
   // 基础的get/post方法
 
-  get(url, opts = {}) {
-    return this.requestWrapper('GET', url, {...opts});
+  get(url,params, opts = {}) {
+    return this.requestWrapper('GET', url, {...opts,params});
   }
 
   post(url,data, opts = {}) {
@@ -108,6 +108,9 @@ class Ajax {
     /*var params = new URLSearchParams();
     params.append('currentPage', currentPage);
     params.append('pageSize', pageSize);*/
+    if(queryObj){
+      queryObj=null;
+    }
     return this.get(`${globalConfig.getAPIPath()}${globalConfig.login.getUserList}`,{queryObj, currentPage, pageSize});
   }
 

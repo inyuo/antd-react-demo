@@ -14,7 +14,7 @@ class SimpleTab extends React.PureComponent {
 
   state = {
     // 本身的状态
-    loadingSchema: false,  // 是否正在从远程加载schema
+    loading: false,  // 是否正在从远程加载schema
     // 选中的列
     selectedRowKeys:[],
     // 表单组件的状态
@@ -22,7 +22,7 @@ class SimpleTab extends React.PureComponent {
 
     // 表格组件的状态
     dataSource: [],  // 表格中显示的数据
-    tableLoading: false,  // 表格是否是loading状态
+    tableLoading: true,  // 表格是否是loading状态
 
     // 分页器的状态
     currentPage: 1,  // 当前第几页, 注意页码是从1开始的, 以前总是纠结页码从0还是1开始, 这里统一下, 跟显示给用户的一致
@@ -32,16 +32,11 @@ class SimpleTab extends React.PureComponent {
     total: 0,  // 总共有多少条数据
   };
 
-  start = () => {
-    this.setState({loading: true});
-    // ajax request after empty completing
-    setTimeout(() => {
-      this.setState({
-        selectedRowKeys: [],
-        loading: false,
-        sourceData: [],
-      });
-    }, 1000);
+  /**
+   * 组件初次挂载时parse schema
+   */
+  componentWillMount() {
+    this.state.dataSource = this.props.dataSource;
   }
 
   //选中状态更改
@@ -51,11 +46,14 @@ class SimpleTab extends React.PureComponent {
   }
 
   render() {
-    const {loading, selectedRowKeys} = this.state;
+    this.state.dataSource=this.props.dataSource;
+    this.state.tableLoading=this.props.tableLoading;
+    const selectedRowKeys=this.state.selectedRowKeys;
     const rowSelection = {
       selectedRowKeys,
       onChange: this.onSelectChange,
     };
+
     const hasSelected = selectedRowKeys.length;
     const columns = [{
       title: '昵称',
@@ -80,12 +78,13 @@ class SimpleTab extends React.PureComponent {
       title: '头像',
       dataIndex: 'image',
       render: () => <img
-        src="http://jingo.oss-cn-beijing.aliyuncs.com/u%3D2064010887%2C1330835443%26fm%3D27%26gp%3D0.jpg" width="80"
+        src="https://jingo.oss-cn-beijing.aliyuncs.com/%E4%B8%8B%E8%BD%BD%20%281%29.jpg" width="80"
         height="100"/>
     }, {
       title: '帐号状态',
       dataIndex: 'status',
       defaultSortOrder: 'descend',
+      render:  () => status == 0? '已验证':'未验证',
     }, {
       title: '邮箱',
       dataIndex: 'email',
@@ -101,12 +100,9 @@ class SimpleTab extends React.PureComponent {
     }, {
       title: '操作',
       dataIndex: 'did',
-      render: () => <div><a href="#">Del</a><a href="#">Edit</a></div>
+      render: () => <div><a href="#">Del</a> | <a href="#">Edit</a></div>
     }
     ];
-
-
-
 
     return (
       <div>
@@ -115,8 +111,7 @@ class SimpleTab extends React.PureComponent {
             type="primary"
             onClick={this.start}
             disabled={!hasSelected}
-            loading={loading}
-          >
+            loading={this.state.tableLoading}>
             更多操作
           </Button>
           <span style={{marginLeft: 8}}>
